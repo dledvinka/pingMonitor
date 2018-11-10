@@ -8,7 +8,7 @@ namespace PingMonitor.Service
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=PingMonitor;Trusted_Connection=True;");
+            optionsBuilder.UseSqlite("Data Source=D:\\pingmonitor.db");
         }
     }
 }
