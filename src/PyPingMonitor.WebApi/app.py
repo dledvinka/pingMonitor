@@ -7,6 +7,7 @@ app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'crud.sqlite')
 db = SQLAlchemy(app)
+
 ma = Marshmallow(app)
 
 
@@ -23,7 +24,7 @@ class PingResult(db.Model):
 class PingResultSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('timeElapsedMs', 'status')
+        fields = ('id', 'timeElapsedMs', 'status')
 
 
 pingResult_schema = PingResultSchema()
@@ -41,12 +42,12 @@ def add_pingresult():
     db.session.add(new_pingResult)
     db.session.commit()
 
-    return jsonify(new_pingResult)
-
+    return pingResult_schema.jsonify(new_pingResult)
 
 # endpoint to show all users
 @app.route("/pingresult", methods=["GET"])
 def get_pingresult():
+    # db.create_all()
     all_pingresults = PingResult.query.all()
     result = pingResults_schema.dump(all_pingresults)
     return jsonify(result.data)
@@ -56,7 +57,7 @@ def get_pingresult():
 @app.route("/pingresult/<id>", methods=["GET"])
 def pingresult_detail(id):
     pingresult = PingResult.query.get(id)
-    return ping_schema.jsonify(user)
+    return pingResult_schema.jsonify(pingresult)
 
 
 # endpoint to update user
@@ -70,7 +71,7 @@ def pingresult_update(id):
     pingresult.status = status
 
     db.session.commit()
-    return ping_schema.jsonify(pingresult)
+    return pingResult_schema.jsonify(pingresult)
 
 
 # # endpoint to delete user
